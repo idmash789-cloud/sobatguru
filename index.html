@@ -3,62 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a1e46">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1e46'/%3E%3Cpath d='M32 13 59 24 32 35 5 24Z' fill='%23ffffff'/%3E%3Cpath d='M17 29.5V40c0 3.6 6.7 6.5 15 6.5S47 43.6 47 40V29.5L32 36Z' fill='%23f5b942'/%3E%3Cpath d='M53 27v13' stroke='%23f5b942' stroke-width='3.5' stroke-linecap='round'/%3E%3Ccircle cx='53' cy='44' r='2.6' fill='%23f5b942'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Sobat Guru — Generator Prompt Perangkat Ajar</title>
 <meta name="description" content="Sobat Guru: Susun prompt perangkat ajar terkalibrasi Kurikulum Merdeka & Pembelajaran Mendalam, jalankan di Gemini/ChatGPT gratis, lalu rapikan hasilnya jadi Word/PDF berkop surat.">
 <style>
 :root{
-  --biru:#1d4ed8; --biru-gelap:#1e3a8a; --biru-muda:#eff6ff;
-  --teks:#0f172a; --teks-lembut:#475569; --garis:#e2e8f0;
+  --navy:#0a1e46; --navy-2:#12295e;
+  --biru:#2563eb; --biru-gelap:#1e3a8a; --biru-muda:#eef4ff;
+  --emas:#f5b942; --emas-gelap:#b45309;
+  --teks:#0f172a; --teks-lembut:#5b6b82; --garis:#e3e9f2;
   --hijau:#15803d; --hijau-muda:#f0fdf4; --kuning-muda:#fffbeb; --kuning:#b45309;
-  --radius:14px;
+  --radius:18px;
+  --bayangan:0 1px 2px rgba(10,30,70,.05),0 10px 30px -12px rgba(10,30,70,.14);
+  --bayangan-naik:0 2px 4px rgba(10,30,70,.06),0 18px 38px -14px rgba(10,30,70,.24);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#f8fafc;color:var(--teks);line-height:1.55}
-header{background:linear-gradient(135deg,var(--biru-gelap),var(--biru));color:#fff;padding:22px 16px 18px;text-align:center}
-header h1{font-size:1.45rem;letter-spacing:.2px}
-header p{opacity:.92;font-size:.92rem;margin-top:4px}
-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:12px 12px 0;max-width:960px;margin:0 auto}
-nav button{background:#fff;border:1px solid var(--garis);color:var(--teks);padding:9px 14px;border-radius:999px;font-size:.9rem;cursor:pointer;font-weight:600}
-nav button.aktif{background:var(--biru);border-color:var(--biru);color:#fff}
-main{max-width:960px;margin:0 auto;padding:16px 12px 48px}
+html{scroll-behavior:smooth}
+body{font-family:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#eef2f9 0,#f6f8fc 340px,#f6f8fc 100%);color:var(--teks);line-height:1.55;-webkit-font-smoothing:antialiased}
+/* ===== HERO / HEADER PREMIUM ===== */
+header{position:relative;overflow:hidden;background:radial-gradient(720px 300px at 12% -60px,rgba(245,185,66,.28),transparent 62%),radial-gradient(820px 340px at 88% -80px,rgba(59,130,246,.5),transparent 60%),linear-gradient(128deg,var(--navy) 0%,var(--navy-2) 46%,#1d4ed8 100%);color:#fff;padding:38px 16px 30px;text-align:center}
+header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,transparent,var(--emas),transparent)}
+.hero-dalam{position:relative;max-width:760px;margin:0 auto}
+.logo-mark{width:84px;height:84px;margin:0 auto 14px;border-radius:24px;background:linear-gradient(150deg,rgba(255,255,255,.2),rgba(255,255,255,.06));border:1px solid rgba(245,185,66,.65);box-shadow:0 14px 30px -10px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:56px;height:56px;display:block}
+header h1{font-size:2.05rem;font-weight:800;letter-spacing:.2px;line-height:1.15}
+header h1 .emas{background:linear-gradient(92deg,#fcd34d,var(--emas) 55%,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent}
+header p.tagline{opacity:.94;font-size:.97rem;margin:9px auto 0;max-width:620px}
+.lencana{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.lencana span{font-size:.79rem;font-weight:600;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(4px)}
+/* ===== NAVIGASI ===== */
+nav{position:sticky;top:0;z-index:40;display:flex;gap:8px;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding:12px;max-width:960px;margin:0 auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+@media(min-width:720px){nav{justify-content:center;flex-wrap:wrap;overflow:visible}}
+nav button{flex:0 0 auto;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border:1px solid var(--garis);color:var(--teks);padding:9px 15px;border-radius:999px;font-size:.9rem;cursor:pointer;font-weight:600;box-shadow:0 1px 3px rgba(10,30,70,.06);transition:all .18s}
+nav button:hover{border-color:#b9ccf5;transform:translateY(-1px)}
+nav button.aktif{background:linear-gradient(135deg,var(--navy-2),var(--biru));border-color:transparent;color:#fff;box-shadow:0 8px 18px -8px rgba(30,58,138,.65)}
+main{max-width:960px;margin:0 auto;padding:14px 12px 48px}
 .view{display:none}
-.view.aktif{display:block}
-.kartu{background:#fff;border:1px solid var(--garis);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
-.kartu h2{font-size:1.12rem;margin-bottom:6px}
+.view.aktif{display:block;animation:muncul .25s ease}
+@keyframes muncul{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.kartu{background:#fff;border:1px solid var(--garis);border-radius:var(--radius);padding:22px 20px;margin-bottom:16px;box-shadow:var(--bayangan)}
+.kartu h2{font-size:1.14rem;margin-bottom:6px;letter-spacing:-.1px}
 .kartu h3{font-size:1rem;margin:14px 0 6px}
 .kartu p.kecil,.kecil{font-size:.87rem;color:var(--teks-lembut)}
 .grid{display:grid;grid-template-columns:1fr;gap:12px}
 @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}.grid .lebar{grid-column:1/-1}}
 .menu-grid{display:grid;grid-template-columns:1fr;gap:12px}
 @media(min-width:720px){.menu-grid{grid-template-columns:1fr 1fr}}
-button.menu{text-align:left;background:#fff;border:1px solid var(--garis);border-radius:var(--radius);padding:18px;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.04)}
-button.menu:hover{border-color:var(--biru)}
-button.menu .ikon{font-size:1.7rem}
-button.menu .judul{font-weight:700;font-size:1.05rem;margin:6px 0 2px}
+button.menu{text-align:left;background:#fff;border:1px solid var(--garis);border-radius:var(--radius);padding:20px;cursor:pointer;box-shadow:var(--bayangan);transition:all .18s;font-family:inherit}
+button.menu:hover{border-color:#b9ccf5;box-shadow:var(--bayangan-naik);transform:translateY(-2px)}
+button.menu .ikon{width:54px;height:54px;border-radius:16px;background:linear-gradient(140deg,var(--biru-muda),#dbeafe);border:1px solid #c7dbff;display:flex;align-items:center;justify-content:center;font-size:1.65rem;margin-bottom:10px}
+button.menu .judul{font-weight:700;font-size:1.06rem;margin:2px 0 3px;color:var(--teks)}
 button.menu .desc{font-size:.88rem;color:var(--teks-lembut)}
 label{display:block;font-size:.86rem;font-weight:600;margin:10px 0 4px}
-input[type=text],input[type=number],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--garis);border-radius:10px;font-size:.95rem;font-family:inherit;background:#fff;color:var(--teks)}
+input[type=text],input[type=number],select,textarea{width:100%;padding:11px 13px;border:1px solid var(--garis);border-radius:12px;font-size:.95rem;font-family:inherit;background:#fbfcfe;color:var(--teks);transition:border-color .15s,box-shadow .15s,background .15s}
+input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{outline:none;border-color:var(--biru);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.13)}
 textarea{resize:vertical;min-height:74px}
 textarea.besar{min-height:150px}
-textarea.prompt{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.83rem;min-height:300px;background:#0f172a;color:#e2e8f0;border-radius:10px}
+textarea.prompt{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.83rem;min-height:300px;background:#0a1e46;color:#dbeafe;border-radius:12px;border-color:#0a1e46}
 .cek{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px}
 .cek label{font-weight:500;display:flex;align-items:center;gap:6px;margin:2px 0;font-size:.9rem}
-.cek input{width:auto}
-.btn{display:inline-block;border:none;border-radius:10px;padding:12px 18px;font-size:.95rem;font-weight:700;cursor:pointer;text-align:center}
-.btn-utama{background:var(--biru);color:#fff;width:100%}
-.btn-utama:hover{background:var(--biru-gelap)}
-.btn-hijau{background:var(--hijau);color:#fff}
+.cek input{width:auto;accent-color:var(--biru)}
+.btn{display:inline-block;border:none;border-radius:12px;padding:12px 18px;font-size:.95rem;font-weight:700;cursor:pointer;text-align:center;font-family:inherit;transition:all .18s}
+.btn-utama{background:linear-gradient(135deg,var(--biru),var(--biru-gelap));color:#fff;width:100%;box-shadow:0 10px 20px -10px rgba(30,58,138,.7)}
+.btn-utama:hover{filter:brightness(1.09);transform:translateY(-1px)}
+.btn-hijau{background:linear-gradient(135deg,#16a34a,var(--hijau));color:#fff;box-shadow:0 8px 16px -8px rgba(21,128,61,.6)}
+.btn-hijau:hover{filter:brightness(1.07)}
 .btn-netral{background:#fff;border:1px solid var(--garis);color:var(--teks)}
+.btn-netral:hover{border-color:#b9ccf5;background:#f8fbff}
 .btn-kecil{padding:9px 13px;font-size:.87rem}
 .baris-btn{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .baris-btn .btn{flex:1;min-width:140px}
-.langkah{background:var(--biru-muda);border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;font-size:.9rem;margin-bottom:14px}
+.langkah{background:linear-gradient(120deg,#eef4ff,#e3edff);border:1px solid #c7dbff;border-left:4px solid var(--emas);border-radius:12px;padding:14px 16px;font-size:.9rem;margin-bottom:14px}
 .langkah b{color:var(--biru-gelap)}
-.peringatan{background:var(--kuning-muda);border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:10px 14px;font-size:.88rem;margin-top:10px}
-.sukses{background:var(--hijau-muda);border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:10px 14px;font-size:.88rem;margin-top:10px}
-#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:12px 18px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:.25s;max-width:92vw;text-align:center;z-index:50}
+.peringatan{background:var(--kuning-muda);border:1px solid #fde68a;color:#92400e;border-radius:12px;padding:10px 14px;font-size:.88rem;margin-top:10px}
+.sukses{background:var(--hijau-muda);border:1px solid #bbf7d0;color:#166534;border-radius:12px;padding:10px 14px;font-size:.88rem;margin-top:10px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#0a1e46;color:#fff;padding:12px 18px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:.25s;max-width:92vw;text-align:center;z-index:50;box-shadow:0 14px 30px -10px rgba(10,30,70,.5);border:1px solid rgba(245,185,66,.5)}
 #toast.tampil{opacity:1;transform:translateX(-50%) translateY(0)}
-footer{text-align:center;color:var(--teks-lembut);font-size:.82rem;padding:0 16px 30px}
+footer{text-align:center;color:var(--teks-lembut);font-size:.82rem;padding:2px 16px 32px}
+footer .kaki-logo{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--navy-2)}
 /* ===== Dokumen hasil rapikan ===== */
 .dok{background:#fff;color:#111;font-family:Georgia,"Times New Roman",serif;font-size:11pt;line-height:1.6}
 .dok .kop{text-align:center;border-bottom:3px double #111;padding-bottom:8px;margin-bottom:16px}
@@ -81,8 +108,18 @@ footer{text-align:center;color:var(--teks-lembut);font-size:.82rem;padding:0 16p
 </head>
 <body>
 <header>
-  <h1>🎓 Sobat Guru</h1>
-  <p>Generator prompt perangkat ajar terkalibrasi — jalankan di Gemini / ChatGPT gratis, rapikan jadi Word &amp; PDF berkop surat.</p>
+  <div class="hero-dalam">
+    <div class="logo-mark"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+  <path d="M32 8 L60 19.5 L32 31 L4 19.5 Z" fill="#ffffff"/>
+  <path d="M16 25.8 V37c0 4 7.2 7.2 16 7.2 S48 41 48 37 V25.8 L32 32.6 Z" fill="#f5b942"/>
+  <path d="M54 23.5 V38" stroke="#f5b942" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="54" cy="42" r="3" fill="#f5b942"/>
+  <path d="M14 50c5.5-2.6 11.5-2.6 18 .8 6.5-3.4 12.5-3.4 18-.8v5.4c-5.5-2.6-11.5-2.6-18 .8-6.5-3.4-12.5-3.4-18-.8 Z" fill="#ffffff" opacity=".92"/>
+</svg></div>
+    <h1>Sobat <span class="emas">Guru</span></h1>
+    <p class="tagline">Generator prompt perangkat ajar terkalibrasi — jalankan di Gemini / ChatGPT gratis, rapikan jadi Word &amp; PDF berkop surat.</p>
+    <div class="lencana"><span>🏅 Permendikdasmen 13/2025</span><span>🤖 Tanpa Biaya AI</span><span>🎓 Untuk Guru Indonesia</span></div>
+  </div>
 </header>
 
 <nav>
@@ -311,7 +348,7 @@ footer{text-align:center;color:var(--teks-lembut);font-size:.82rem;padding:0 16p
 </section>
 </main>
 
-<footer>Sobat Guru • Berjalan 100% di browser — tanpa server, tanpa biaya AI • Data hanya tersimpan di perangkat Anda</footer>
+<footer><span class="kaki-logo">🎓 Sobat Guru</span> • Berjalan 100% di browser — tanpa server, tanpa biaya AI • Data hanya tersimpan di perangkat Anda</footer>
 <div id="toast"></div>
 
 <script>
