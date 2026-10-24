@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobat Guru — Generator Prompt Perangkat Ajar</title>
+<meta name="description" content="Sobat Guru: Susun prompt perangkat ajar terkalibrasi Kurikulum Merdeka & Pembelajaran Mendalam, jalankan di Gemini/ChatGPT gratis, lalu rapikan hasilnya jadi Word/PDF berkop surat.">
+<style>
+:root{
+  --biru:#1d4ed8; --biru-gelap:#1e3a8a; --biru-muda:#eff6ff;
+  --teks:#0f172a; --teks-lembut:#475569; --garis:#e2e8f0;
+  --hijau:#15803d; --hijau-muda:#f0fdf4; --kuning-muda:#fffbeb; --kuning:#b45309;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#f8fafc;color:var(--teks);line-height:1.55}
+header{background:linear-gradient(135deg,var(--biru-gelap),var(--biru));color:#fff;padding:22px 16px 18px;text-align:center}
+header h1{font-size:1.45rem;letter-spacing:.2px}
+header p{opacity:.92;font-size:.92rem;margin-top:4px}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:12px 12px 0;max-width:960px;margin:0 auto}
+nav button{background:#fff;border:1px solid var(--garis);color:var(--teks);padding:9px 14px;border-radius:999px;font-size:.9rem;cursor:pointer;font-weight:600}
+nav button.aktif{background:var(--biru);border-color:var(--biru);color:#fff}
+main{max-width:960px;margin:0 auto;padding:16px 12px 48px}
+.view{display:none}
+.view.aktif{display:block}
+.kartu{background:#fff;border:1px solid var(--garis);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.kartu h2{font-size:1.12rem;margin-bottom:6px}
+.kartu h3{font-size:1rem;margin:14px 0 6px}
+.kartu p.kecil,.kecil{font-size:.87rem;color:var(--teks-lembut)}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:720px){.grid{grid-template-columns:1fr 1fr}.grid .lebar{grid-column:1/-1}}
+.menu-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:720px){.menu-grid{grid-template-columns:1fr 1fr}}
+button.menu{text-align:left;background:#fff;border:1px solid var(--garis);border-radius:var(--radius);padding:18px;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+button.menu:hover{border-color:var(--biru)}
+button.menu .ikon{font-size:1.7rem}
+button.menu .judul{font-weight:700;font-size:1.05rem;margin:6px 0 2px}
+button.menu .desc{font-size:.88rem;color:var(--teks-lembut)}
+label{display:block;font-size:.86rem;font-weight:600;margin:10px 0 4px}
+input[type=text],input[type=number],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--garis);border-radius:10px;font-size:.95rem;font-family:inherit;background:#fff;color:var(--teks)}
+textarea{resize:vertical;min-height:74px}
+textarea.besar{min-height:150px}
+textarea.prompt{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.83rem;min-height:300px;background:#0f172a;color:#e2e8f0;border-radius:10px}
+.cek{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px}
+.cek label{font-weight:500;display:flex;align-items:center;gap:6px;margin:2px 0;font-size:.9rem}
+.cek input{width:auto}
+.btn{display:inline-block;border:none;border-radius:10px;padding:12px 18px;font-size:.95rem;font-weight:700;cursor:pointer;text-align:center}
+.btn-utama{background:var(--biru);color:#fff;width:100%}
+.btn-utama:hover{background:var(--biru-gelap)}
+.btn-hijau{background:var(--hijau);color:#fff}
+.btn-netral{background:#fff;border:1px solid var(--garis);color:var(--teks)}
+.btn-kecil{padding:9px 13px;font-size:.87rem}
+.baris-btn{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.baris-btn .btn{flex:1;min-width:140px}
+.langkah{background:var(--biru-muda);border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;font-size:.9rem;margin-bottom:14px}
+.langkah b{color:var(--biru-gelap)}
+.peringatan{background:var(--kuning-muda);border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:10px 14px;font-size:.88rem;margin-top:10px}
+.sukses{background:var(--hijau-muda);border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:10px 14px;font-size:.88rem;margin-top:10px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:12px 18px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:.25s;max-width:92vw;text-align:center;z-index:50}
+#toast.tampil{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{text-align:center;color:var(--teks-lembut);font-size:.82rem;padding:0 16px 30px}
+/* ===== Dokumen hasil rapikan ===== */
+.dok{background:#fff;color:#111;font-family:Georgia,"Times New Roman",serif;font-size:11pt;line-height:1.6}
+.dok .kop{text-align:center;border-bottom:3px double #111;padding-bottom:8px;margin-bottom:16px}
+.dok .kop .sekolah{font-weight:bold;font-size:14pt;text-transform:uppercase}
+.dok .kop .alamat{font-size:9.5pt}
+.dok h1{font-size:15pt;text-align:center;margin:14px 0 10px;text-transform:uppercase}
+.dok h2{font-size:12.5pt;margin:16px 0 6px}
+.dok h3{font-size:11.5pt;margin:12px 0 4px}
+.dok h4{font-size:11pt;margin:10px 0 4px}
+.dok p{margin:5px 0;text-align:justify}
+.dok ul,.dok ol{margin:5px 0 5px 22px}
+.dok li{margin:2px 0}
+.dok table{border-collapse:collapse;width:100%;margin:10px 0;font-size:10.5pt}
+.dok th,.dok td{border:1px solid #333;padding:5px 7px;vertical-align:top;text-align:left}
+.dok th{background:#e8e8e8}
+.dok blockquote{border-left:3px solid #999;margin:8px 0;padding:2px 12px;color:#333}
+.dok hr{border:none;border-top:1px solid #999;margin:12px 0}
+.pratinjau-bungkus{border:1px solid var(--garis);border-radius:10px;padding:22px;background:#fff;max-height:70vh;overflow:auto}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎓 Sobat Guru</h1>
+  <p>Generator prompt perangkat ajar terkalibrasi — jalankan di Gemini / ChatGPT gratis, rapikan jadi Word &amp; PDF berkop surat.</p>
+</header>
+
+<nav>
+  <button data-nav="home" class="aktif">🏠 Beranda</button>
+  <button data-nav="modul">📄 Modul Ajar</button>
+  <button data-nav="cptp">🗺️ Analisis CP–TP–ATP</button>
+  <button data-nav="soal">🎯 Soal &amp; Rubrik</button>
+  <button data-nav="perapi">✨ Perapi Dokumen</button>
+  <button data-nav="setting">⚙️ Kop Surat</button>
+</nav>
+
+<main>
+<!-- ================= BERANDA ================= -->
+<section id="view-home" class="view aktif">
+  <div class="kartu">
+    <h2>Cara Pakai (3 Langkah)</h2>
+    <div class="langkah">
+      <b>1.</b> Isi data umum &amp; formulir dokumen yang mau dibuat, lalu klik <b>Susun Prompt</b>.<br>
+      <b>2.</b> Klik <b>Buka di ChatGPT</b> atau <b>Buka di Gemini</b> — prompt terisi otomatis / tersalin, tinggal Enter dan tunggu AI menyusun dokumennya.<br>
+      <b>3.</b> Salin hasil dari AI, tempel di menu <b>Perapi Dokumen</b> → unduh sebagai <b>Word / PDF rapi lengkap dengan kop surat sekolah</b>.
+    </div>
+    <p class="kecil">Semua data tersimpan otomatis di perangkat ini (tidak dikirim ke server mana pun). Generate berjalan di akun Gemini/ChatGPT milik Bapak/Ibu sendiri — aplikasi ini tidak memungut biaya AI apa pun.</p>
+  </div>
+
+  <div class="kartu">
+    <h2>Data Umum (dipakai semua dokumen)</h2>
+    <div class="grid">
+      <div><label>Nama Guru</label><input type="text" id="id_nama" placeholder="cth: Sari Wulandari, S.Pd."></div>
+      <div><label>NIP (opsional)</label><input type="text" id="id_nip" placeholder="cth: 19900101 202001 2 001"></div>
+      <div><label>Nama Sekolah</label><input type="text" id="id_sekolah" placeholder="cth: SMP Negeri 1 Sukamaju"></div>
+      <div><label>Alamat Sekolah</label><input type="text" id="id_alamat" placeholder="cth: Jl. Pendidikan No. 10, Kec. Sukamaju, Kab. Bogor"></div>
+      <div><label>Jenjang</label>
+        <select id="id_jenjang">
+          <option>SD</option><option>MI</option><option>SMP</option><option>MTs</option>
+          <option>SMA</option><option>MA</option><option>SMK</option>
+        </select></div>
+      <div><label>Kelas</label>
+        <select id="id_kelas">
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+          <option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+        </select></div>
+      <div><label>Fase</label>
+        <select id="id_fase">
+          <option value="A (Kelas 1–2)">A (Kelas 1–2)</option>
+          <option value="B (Kelas 3–4)">B (Kelas 3–4)</option>
+          <option value="C (Kelas 5–6)">C (Kelas 5–6)</option>
+          <option value="D (Kelas 7–9)">D (Kelas 7–9)</option>
+          <option value="E (Kelas 10)">E (Kelas 10)</option>
+          <option value="F (Kelas 11–12)">F (Kelas 11–12)</option>
+        </select></div>
+      <div><label>Mata Pelajaran</label>
+        <select id="id_mapel">
+          <option>Matematika</option><option>Bahasa Indonesia</option><option>Bahasa Inggris</option>
+          <option>IPA</option><option>IPS</option><option>IPAS</option><option>Pendidikan Pancasila</option>
+          <option>Pendidikan Agama Islam</option><option>PJOK</option><option>Seni Budaya</option>
+          <option>Informatika</option><option>Bahasa Daerah</option><option value="__lain">Lainnya (ketik sendiri)…</option>
+        </select></div>
+      <div id="mapel-lain-bungkus" style="display:none"><label>Nama Mapel (ketik sendiri)</label><input type="text" id="id_mapel_lain" placeholder="cth: Pemrograman Web Dasar / Mulok Bahasa Sunda"></div>
+      <div><label>Semester</label>
+        <select id="id_semester"><option>Ganjil</option><option>Genap</option></select></div>
+      <div><label>Tahun Ajaran</label><input type="text" id="id_tahun" placeholder="cth: 2026/2027"></div>
+    </div>
+    <p class="kecil" style="margin-top:8px">💾 Tersimpan otomatis setiap kali diubah.</p>
+  </div>
+
+  <div class="menu-grid">
+    <button class="menu" data-nav="modul"><div class="ikon">📄</div><div class="judul">Modul Ajar / RPP</div><div class="desc">Modul ajar lengkap format Pembelajaran Mendalam (Permendikdasmen 13/2025): identitas, CP–TP, pengalaman belajar, asesmen, LKPD, remedial &amp; pengayaan, refleksi.</div></button>
+    <button class="menu" data-nav="cptp"><div class="ikon">🗺️</div><div class="judul">Analisis CP – TP – ATP</div><div class="desc">Urai Capaian Pembelajaran menjadi Tujuan Pembelajaran terukur dan susun Alur Tujuan Pembelajaran yang runtut per semester, dalam tabel rapi.</div></button>
+    <button class="menu" data-nav="soal"><div class="ikon">🎯</div><div class="judul">Soal, Kisi-kisi &amp; Rubrik</div><div class="desc">Kisi-kisi, soal pilihan ganda + esai HOTS, kunci jawaban &amp; pembahasan, rubrik dan pedoman penskoran.</div></button>
+    <button class="menu" data-nav="perapi"><div class="ikon">✨</div><div class="judul">Perapi Dokumen</div><div class="desc">Tempel hasil mentah dari Gemini/ChatGPT → jadi dokumen rapi berkop surat, siap unduh Word atau cetak PDF.</div></button>
+  </div>
+</section>
+
+<!-- ================= MODUL AJAR ================= -->
+<section id="view-modul" class="view">
+  <div class="kartu">
+    <h2>📄 Generator Prompt — Modul Ajar / RPP</h2>
+    <p class="kecil">Menggunakan data umum dari Beranda: <span id="ringkas-modul"></span></p>
+    <div class="grid">
+      <div class="lebar"><label>Topik / Materi Pokok *</label><input type="text" id="m_topik" placeholder="cth: Pecahan Senilai dan Membandingkan Pecahan"></div>
+      <div class="lebar"><label>Capaian Pembelajaran (CP) — tempel teks CP bila ada (opsional)</label><textarea id="m_cp" placeholder="Tempel teks CP resmi mapel ini di sini agar modul persis mengacu padanya. Kosongkan bila ingin AI menyusunnya dari nol."></textarea>
+      <button class="btn btn-netral btn-kecil" id="m_pakai_cp" type="button" style="display:none;margin-top:8px">⬇ Pakai CP dari Analisis terakhir</button></div>
+      <div><label>Alokasi Waktu</label><input type="text" id="m_waktu" placeholder="cth: 2 pertemuan × 2 JP (35 menit)"></div>
+      <div><label>Model / Pendekatan Pembelajaran</label>
+        <select id="m_model">
+          <option>Problem Based Learning (PBL)</option>
+          <option>Project Based Learning (PjBL)</option>
+          <option>Discovery Learning</option>
+          <option>Inquiry Learning</option>
+          <option>Pembelajaran Kooperatif</option>
+          <option>Pembelajaran Berdiferensiasi</option>
+          <option>Teaching at the Right Level (TaRL)</option>
+          <option value="__lain">Lainnya (ketik sendiri)…</option>
+        </select></div>
+      <div id="model-lain-bungkus" style="display:none"><label>Model (ketik sendiri)</label><input type="text" id="m_model_lain"></div>
+      <div class="lebar"><label>Dimensi Profil Lulusan yang ditekankan (pilih 2–4)</label>
+        <div class="cek" id="m_dimensi">
+          <label><input type="checkbox" value="Keimanan dan Ketakwaan"> Keimanan dan Ketakwaan</label>
+          <label><input type="checkbox" value="Kewargaan"> Kewargaan</label>
+          <label><input type="checkbox" value="Penalaran Kritis"> Penalaran Kritis</label>
+          <label><input type="checkbox" value="Kreativitas"> Kreativitas</label>
+          <label><input type="checkbox" value="Kolaborasi"> Kolaborasi</label>
+          <label><input type="checkbox" value="Kemandirian"> Kemandirian</label>
+          <label><input type="checkbox" value="Kesehatan"> Kesehatan</label>
+          <label><input type="checkbox" value="Komunikasi"> Komunikasi</label>
+        </div></div>
+      <div class="lebar"><label>Catatan khusus (opsional)</label><input type="text" id="m_catatan" placeholder="cth: kelas inklusi ada 2 siswa berkebutuhan khusus; sarana terbatas tanpa proyektor"></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn btn-utama" id="m_susun">🧩 Susun Prompt Modul Ajar</button></div>
+    <div id="m_keluar" style="display:none;margin-top:14px">
+      <label>Prompt siap pakai <span class="kecil" id="m_hitung"></span></label>
+      <textarea class="prompt" id="m_prompt" readonly></textarea>
+      <div class="baris-btn">
+        <button class="btn btn-hijau" data-aksi="chatgpt" data-target="m_prompt">🤖 Buka di ChatGPT</button>
+        <button class="btn btn-hijau" data-aksi="gemini" data-target="m_prompt">✨ Buka di Gemini</button>
+        <button class="btn btn-netral" data-aksi="salin" data-target="m_prompt">📋 Salin Prompt</button>
+      </div>
+      <div class="sukses">Setelah AI selesai menyusun dokumennya, salin seluruh hasilnya lalu buka menu <b>Perapi Dokumen</b> untuk mengunduhnya sebagai Word/PDF berkop surat.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ANALISIS CP-TP-ATP ================= -->
+<section id="view-cptp" class="view">
+  <div class="kartu">
+    <h2>🗺️ Generator Prompt — Analisis CP → TP → ATP</h2>
+    <p class="kecil">Menggunakan data umum dari Beranda: <span id="ringkas-cptp"></span></p>
+    <div class="grid">
+      <div><label>Elemen CP</label><input type="text" id="a_elemen" placeholder="cth: Bilangan / Geometri / Membaca dan Memirsa"></div>
+      <div><label>Jumlah pertemuan dalam 1 semester</label><input type="number" id="a_pertemuan" min="1" max="40" value="16"></div>
+      <div class="lebar"><label>Teks Capaian Pembelajaran (CP) resmi *</label><textarea class="besar" id="a_cp" placeholder="Tempel teks CP fase ini dari dokumen resmi CP (Keputusan Kepala BSKAP). Semakin lengkap teksnya, semakin akurat uraiannya."></textarea></div>
+      <div class="lebar"><label>Catatan khusus (opsional)</label><input type="text" id="a_catatan" placeholder="cth: fokuskan semester ganjil; gabungkan dengan materi prasyarat kelas sebelumnya"></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn btn-utama" id="a_susun">🧩 Susun Prompt Analisis</button></div>
+    <div id="a_keluar" style="display:none;margin-top:14px">
+      <label>Prompt siap pakai <span class="kecil" id="a_hitung"></span></label>
+      <textarea class="prompt" id="a_prompt" readonly></textarea>
+      <div class="baris-btn">
+        <button class="btn btn-hijau" data-aksi="chatgpt" data-target="a_prompt">🤖 Buka di ChatGPT</button>
+        <button class="btn btn-hijau" data-aksi="gemini" data-target="a_prompt">✨ Buka di Gemini</button>
+        <button class="btn btn-netral" data-aksi="salin" data-target="a_prompt">📋 Salin Prompt</button>
+      </div>
+      <div class="sukses">Hasil analisis (terutama rumusan TP-nya) bisa ditempel ke formulir Soal sebagai bahan uji, dan teks CP-nya otomatis tersimpan untuk dipakai di Modul Ajar.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOAL ================= -->
+<section id="view-soal" class="view">
+  <div class="kartu">
+    <h2>🎯 Generator Prompt — Soal, Kisi-kisi &amp; Rubrik</h2>
+    <p class="kecil">Menggunakan data umum dari Beranda: <span id="ringkas-soal"></span></p>
+    <div class="grid">
+      <div class="lebar"><label>Topik / Materi yang diujikan *</label><input type="text" id="s_topik" placeholder="cth: Sistem Persamaan Linear Dua Variabel (SPLDV)"></div>
+      <div class="lebar"><label>Tujuan Pembelajaran (TP) yang diuji — tempel bila ada (opsional)</label><textarea id="s_tp" placeholder="Tempel rumusan TP (mis. hasil dari Analisis CP–TP–ATP) agar kisi-kisi persis menagih TP tersebut."></textarea></div>
+      <div><label>Jumlah soal pilihan ganda</label><input type="number" id="s_jumlah_pg" min="0" max="50" value="10"></div>
+      <div><label>Jumlah opsi per soal PG</label>
+        <select id="s_opsi"><option value="4">4 opsi (A–D)</option><option value="5">5 opsi (A–E)</option></select></div>
+      <div><label>Jumlah soal esai/uraian</label><input type="number" id="s_jumlah_esai" min="0" max="10" value="2"></div>
+      <div><label>Level kognitif</label>
+        <select id="s_level">
+          <option>Seimbang (campuran LOTS &amp; HOTS)</option>
+          <option>Dominan HOTS (C4–C6)</option>
+          <option>Dasar (LOTS C1–C3)</option>
+        </select></div>
+      <div class="lebar"><label>Konteks soal (opsional)</label><input type="text" id="s_konteks" placeholder="cth: konteks kehidupan sehari-hari di lingkungan pasar dan sekolah"></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn btn-utama" id="s_susun">🧩 Susun Prompt Soal</button></div>
+    <div id="s_keluar" style="display:none;margin-top:14px">
+      <label>Prompt siap pakai <span class="kecil" id="s_hitung"></span></label>
+      <textarea class="prompt" id="s_prompt" readonly></textarea>
+      <div class="baris-btn">
+        <button class="btn btn-hijau" data-aksi="chatgpt" data-target="s_prompt">🤖 Buka di ChatGPT</button>
+        <button class="btn btn-hijau" data-aksi="gemini" data-target="s_prompt">✨ Buka di Gemini</button>
+        <button class="btn btn-netral" data-aksi="salin" data-target="s_prompt">📋 Salin Prompt</button>
+      </div>
+      <div class="sukses">Kunci jawaban &amp; pembahasan sengaja diminta di bagian paling akhir dokumen, supaya lembar soal untuk siswa mudah dipisahkan dari kunci untuk guru.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PERAPI DOKUMEN ================= -->
+<section id="view-perapi" class="view">
+  <div class="kartu">
+    <h2>✨ Perapi Dokumen — Tempel &amp; Rapikan</h2>
+    <p class="kecil">Tempel hasil mentah dari Gemini/ChatGPT di bawah ini. Aplikasi merapikannya menjadi dokumen berkop surat yang siap diunduh sebagai Word atau dicetak/disimpan sebagai PDF.</p>
+    <label>Judul dokumen (opsional — kosongkan untuk memakai judul dari teks)</label>
+    <input type="text" id="p_judul" placeholder="cth: MODUL AJAR MATEMATIKA — PECAHAN SENILAI">
+    <label>Teks hasil AI *</label>
+    <textarea class="besar" id="p_teks" style="min-height:220px" placeholder="Tempel (paste) seluruh hasil dari Gemini/ChatGPT di sini…"></textarea>
+    <div class="baris-btn">
+      <button class="btn btn-utama" id="p_rapikan" style="flex:2">👀 Rapikan &amp; Pratinjau</button>
+      <button class="btn btn-netral" id="p_contoh">Lihat Contoh</button>
+    </div>
+    <div id="p_hasil" style="display:none;margin-top:16px">
+      <div class="pratinjau-bungkus"><div class="dok" id="p_pratinjau"></div></div>
+      <div class="baris-btn">
+        <button class="btn btn-hijau" id="p_word">⬇ Unduh Word (.doc)</button>
+        <button class="btn btn-hijau" id="p_pdf">🖨️ Cetak / Simpan PDF</button>
+      </div>
+      <p class="kecil" style="margin-top:6px">Untuk PDF: pada jendela cetak, pilih printer "Simpan sebagai PDF / Save as PDF".</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PENGATURAN KOP ================= -->
+<section id="view-setting" class="view">
+  <div class="kartu">
+    <h2>⚙️ Pengaturan Kop Surat &amp; Tanda Tangan</h2>
+    <p class="kecil">Kop surat diambil otomatis dari nama &amp; alamat sekolah di Beranda. Lengkapi baris tambahan di sini bila sekolah memakai kop resmi yang lebih lengkap.</p>
+    <div class="grid">
+      <div><label>Baris 1 kop (instansi induk, opsional)</label><input type="text" id="k_baris1" placeholder="cth: PEMERINTAH KABUPATEN BOGOR — DINAS PENDIDIKAN"></div>
+      <div><label>Kontak sekolah (opsional)</label><input type="text" id="k_kontak" placeholder="cth: Telp. (0251) 000000 • Email: smpn1@sukamaju.sch.id"></div>
+      <div><label>Kota tempat tanda tangan</label><input type="text" id="k_kota" placeholder="cth: Bogor"></div>
+      <div><label>Nama Kepala Sekolah (opsional)</label><input type="text" id="k_kepala" placeholder="cth: Drs. H. Ahmad Hidayat, M.Pd."></div>
+      <div><label>NIP Kepala Sekolah (opsional)</label><input type="text" id="k_nip_kepala"></div>
+      <div><label>Tampilkan blok tanda tangan di dokumen</label>
+        <select id="k_ttd"><option value="ya">Ya</option><option value="tidak">Tidak</option></select></div>
+    </div>
+    <p class="kecil" style="margin-top:8px">💾 Tersimpan otomatis di perangkat ini.</p>
+  </div>
+  <div class="kartu">
+    <h2>Tentang Aplikasi</h2>
+    <p class="kecil">Sobat Guru — Generator Prompt Perangkat Ajar. Prompt disusun mengikuti format Kurikulum Merdeka &amp; Pembelajaran Mendalam (Permendikdasmen No. 13 Tahun 2025): CP–TP–ATP, 3 prinsip pembelajaran (berkesadaran, bermakna, menggembirakan), dan 8 Dimensi Profil Lulusan. Hasil akhir selalu perlu ditelaah guru sebelum digunakan di kelas.</p>
+  </div>
+</section>
+</main>
+
+<footer>Sobat Guru • Berjalan 100% di browser — tanpa server, tanpa biaya AI • Data hanya tersimpan di perangkat Anda</footer>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ================= Helper & Navigasi ================= */
+const $ = id => document.getElementById(id);
+const val = id => { const e = $(id); return e ? e.value.trim() : ""; };
+function toast(pesan, lama){
+  const t = $("toast"); t.textContent = pesan; t.classList.add("tampil");
+  clearTimeout(t._timer); t._timer = setTimeout(()=>t.classList.remove("tampil"), lama || 3200);
+}
+function tampil(view){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("aktif"));
+  $("view-"+view).classList.add("aktif");
+  document.querySelectorAll("[data-nav]").forEach(b=>{
+    if(b.tagName==="BUTTON" && b.closest("nav")) b.classList.toggle("aktif", b.dataset.nav===view);
+  });
+  segarkanRingkasan();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+document.querySelectorAll("[data-nav]").forEach(b=> b.addEventListener("click", ()=>tampil(b.dataset.nav)));
+
+/* ================= Persistensi data umum & kop ================= */
+const ID_FIELDS = ["id_nama","id_nip","id_sekolah","id_alamat","id_jenjang","id_kelas","id_fase","id_mapel","id_mapel_lain","id_semester","id_tahun"];
+const KOP_FIELDS = ["k_baris1","k_kontak","k_kota","k_kepala","k_nip_kepala","k_ttd"];
+function simpan(kunci, fields){
+  const o = {}; fields.forEach(f=>{ const e=$(f); if(e) o[f]=e.value; });
+  try{ localStorage.setItem(kunci, JSON.stringify(o)); }catch(e){}
+}
+function muat(kunci, fields){
+  try{
+    const o = JSON.parse(localStorage.getItem(kunci) || "{}");
+    fields.forEach(f=>{ const e=$(f); if(e && o[f]!==undefined) e.value = o[f]; });
+  }catch(e){}
+}
+function segarkanLainnya(){
+  $("mapel-lain-bungkus").style.display = val("id_mapel")==="__lain" ? "block" : "none";
+  $("model-lain-bungkus").style.display = val("m_model")==="__lain" ? "block" : "none";
+}
+function segarkanRingkasan(){
+  const t = identitasTeks();
+  ["ringkas-modul","ringkas-cptp","ringkas-soal"].forEach(id=>{ const e=$(id); if(e) e.textContent = t || "— (belum diisi, lengkapi di Beranda)"; });
+  const cpTersimpan = (()=>{ try{ return localStorage.getItem("ag_cp_terakhir") || ""; }catch(e){ return ""; } })();
+  $("m_pakai_cp").style.display = cpTersimpan ? "inline-block" : "none";
+}
+function pasangPersistensi(){
+  ID_FIELDS.forEach(f=>{ const e=$(f); if(e) e.addEventListener("change", ()=>{ simpan("ag_id", ID_FIELDS); segarkanLainnya(); segarkanRingkasan(); }); });
+  KOP_FIELDS.forEach(f=>{ const e=$(f); if(e) e.addEventListener("change", ()=>simpan("ag_kop", KOP_FIELDS)); });
+  $("id_mapel").addEventListener("change", segarkanLainnya);
+  $("m_model").addEventListener("change", segarkanLainnya);
+  $("m_pakai_cp").addEventListener("click", ()=>{
+    try{ $("m_cp").value = localStorage.getItem("ag_cp_terakhir") || ""; toast("CP dari analisis terakhir ditempel."); }catch(e){}
+  });
+}
+function identitas(){
+  return {
+    nama: val("id_nama"), nip: val("id_nip"), sekolah: val("id_sekolah"), alamat: val("id_alamat"),
+    jenjang: val("id_jenjang"), kelas: val("id_kelas"), fase: val("id_fase"),
+    mapel: val("id_mapel")==="__lain" ? (val("id_mapel_lain") || "—") : val("id_mapel"),
+    semester: val("id_semester"), tahun: val("id_tahun")
+  };
+}
+function identitasTeks(){
+  const i = identitas(); const b = [];
+  if(i.mapel && i.mapel!=="—") b.push(i.mapel);
+  if(i.kelas) b.push("Kelas " + i.kelas);
+  if(i.fase) b.push("Fase " + i.fase);
+  if(i.sekolah) b.push(i.sekolah);
+  return b.join(" • ");
+}
+
+/* ================= PENYUSUN PROMPT ================= */
+/*BUILDERS-START*/
+const ATURAN_FORMAT = [
+"ATURAN FORMAT (WAJIB DIIKUTI PERSIS):",
+"- Tulis SELURUH dokumen dalam format Markdown: judul utama diawali '# ', subjudul '## ', sub-subjudul '### ', dan tabel memakai karakter | lengkap dengan baris pemisah |---|.",
+"- Langsung mulai dari judul dokumen. JANGAN menulis sapaan, kalimat pembuka, penjelasan tentang dokumen ini, atau kalimat penutup seperti 'semoga bermanfaat'.",
+"- Gunakan Bahasa Indonesia baku sesuai EYD dan istilah resmi Kurikulum Merdeka / Pembelajaran Mendalam.",
+"- JANGAN memakai placeholder kurung siku seperti [isi di sini]. Untuk data yang tidak kuberikan, tulis tanda '-'.",
+"- Isi harus konkret, lengkap, dan siap pakai di kelas — bukan kerangka kosong atau contoh generik."
+].join("\n");
+
+function barisKonteks(i){
+  const b = [];
+  b.push("- Mata pelajaran: " + (i.mapel || "-"));
+  b.push("- Jenjang / fase / kelas: " + [i.jenjang, i.fase, i.kelas ? "Kelas " + i.kelas : ""].filter(Boolean).join(" / "));
+  b.push("- Semester / tahun ajaran: " + [i.semester, i.tahun].filter(Boolean).join(" / "));
+  b.push("- Sekolah: " + (i.sekolah || "-"));
+  b.push("- Nama guru: " + (i.nama || "-") + (i.nip ? " (NIP " + i.nip + ")" : ""));
+  return b.join("\n");
+}
+
+function buildPromptModul(v){
+  const L = [];
+  L.push("Anda adalah pakar kurikulum Indonesia yang sangat berpengalaman menyusun perangkat ajar Kurikulum Merdeka dan Pembelajaran Mendalam (Permendikdasmen No. 13 Tahun 2025). Susunkan saya MODUL AJAR yang lengkap dan siap pakai dengan data berikut:");
+  L.push("");
+  L.push("KONTEKS:");
+  L.push(barisKonteks(v));
+  L.push("- Topik / materi pokok: " + v.topik);
+  L.push("- Alokasi waktu: " + (v.waktu || "-"));
+  L.push("- Model pembelajaran: " + v.model);
+  L.push("- Dimensi Profil Lulusan yang ditekankan: " + (v.dimensi.length ? v.dimensi.join(", ") : "pilih 2 yang paling relevan dengan topik"));
+  if(v.catatan) L.push("- Catatan khusus: " + v.catatan);
+  L.push("");
+  if(v.cp){
+    L.push("CAPAIAN PEMBELAJARAN (CP) YANG HARUS DIACU PERSIS:");
+    L.push(v.cp);
+    L.push("");
+  } else {
+    L.push("CP tidak kuberikan — gunakan CP resmi mata pelajaran dan fase ini sebagai acuan, dan tuliskan teks CP yang relevan pada bagian B.");
+    L.push("");
+  }
+  L.push("SUSUN DOKUMEN DENGAN STRUKTUR PERSIS BERIKUT:");
+  L.push("# MODUL AJAR — " + String(v.topik).toUpperCase());
+  L.push("## A. Informasi Umum — tabel berisi: nama sekolah, nama guru, mata pelajaran, fase/kelas, semester, tahun ajaran, alokasi waktu, model pembelajaran, jumlah peserta didik (tulis '-').");
+  L.push("## B. Capaian Pembelajaran — teks CP yang diacu.");
+  L.push("## C. Tujuan Pembelajaran — dirumuskan dari CP, terukur (memuat unsur Audience, Behavior, Condition, Degree), ditulis bernomor.");
+  L.push("## D. Dimensi Profil Lulusan — dimensi yang dikembangkan beserta indikator perilaku yang tampak pada pembelajaran ini.");
+  L.push("## E. Pemahaman Bermakna dan Pertanyaan Pemantik.");
+  L.push("## F. Materi Pokok — uraian materi yang padat dan benar secara konsep (bukan sekadar poin judul).");
+  L.push("## G. Pengalaman Belajar — untuk SETIAP pertemuan: (1) Pendahuluan, (2) Kegiatan Inti mengikuti sintaks model pembelajaran yang dipilih, (3) Penutup. Terapkan 3 prinsip Pembelajaran Mendalam: berkesadaran, bermakna, dan menggembirakan. Cantumkan strategi diferensiasi (konten, proses, produk) bagi peserta didik dengan kemampuan berbeda.");
+  L.push("## H. Asesmen — (1) diagnostik di awal, (2) formatif selama pembelajaran, (3) sumatif di akhir; masing-masing dengan bentuk dan contoh instrumen singkatnya.");
+  L.push("## I. Lembar Kerja Peserta Didik (LKPD) — siap salin: petunjuk, aktivitas/langkah kerja, dan pertanyaan atau tabel isian.");
+  L.push("## J. Remedial dan Pengayaan — kegiatan konkret untuk yang belum tuntas dan yang sudah tuntas lebih cepat.");
+  L.push("## K. Refleksi — daftar pertanyaan refleksi untuk guru dan untuk peserta didik.");
+  L.push("## L. Lampiran — bahan bacaan ringkas untuk siswa, glosarium istilah penting, dan daftar pustaka.");
+  L.push("");
+  L.push(ATURAN_FORMAT);
+  return L.join("\n");
+}
+
+function buildPromptCPTP(v){
+  const L = [];
+  L.push("Anda adalah pakar kurikulum Indonesia yang sangat berpengalaman memetakan Capaian Pembelajaran (CP) Kurikulum Merdeka menjadi Tujuan Pembelajaran (TP) dan Alur Tujuan Pembelajaran (ATP). Uraikan CP berikut ini:");
+  L.push("");
+  L.push("KONTEKS:");
+  L.push(barisKonteks(v));
+  L.push("- Elemen CP: " + (v.elemen || "-"));
+  L.push("- Jumlah pertemuan dalam satu semester: " + v.pertemuan + " pertemuan (ATP disusun untuk semester " + (v.semester || "-") + ")");
+  if(v.catatan) L.push("- Catatan khusus: " + v.catatan);
+  L.push("");
+  L.push("TEKS CAPAIAN PEMBELAJARAN (CP) RESMI:");
+  L.push(v.cp);
+  L.push("");
+  L.push("SUSUN DOKUMEN DENGAN STRUKTUR PERSIS BERIKUT:");
+  L.push("# ANALISIS CP, TP, DAN ATP — " + String(v.mapel || "").toUpperCase());
+  L.push("## A. Analisis Capaian Pembelajaran — uraikan CP menjadi komponen: lingkup materi, kompetensi/kata kerja operasional, dan kedalaman materi. Sajikan dalam tabel: | No | Elemen | Lingkup Materi | Kompetensi yang Dituntut | Kata Kerja Operasional |.");
+  L.push("## B. Rumusan Tujuan Pembelajaran (TP) — turunkan TP dari hasil analisis. Setiap TP harus terukur, memakai kata kerja operasional taksonomi Bloom revisi (C1–C6), dan sedapat mungkin memuat unsur Audience, Behavior, Condition, Degree. Sajikan dalam tabel: | No | Kode TP | Rumusan TP | Lingkup Materi | Level Kognitif |.");
+  L.push("## C. Alur Tujuan Pembelajaran (ATP) — urutkan seluruh TP secara logis dan runtut (dari prasyarat menuju kompleks, dari konkret menuju abstrak) lalu petakan ke " + v.pertemuan + " pertemuan semester ini. Sajikan dalam tabel: | Pertemuan ke- | Kode TP | Fokus Materi | Perkiraan Kedalaman (pengenalan/pendalaman/penguatan) |.");
+  L.push("## D. Catatan — keterkaitan antar-TP, TP yang menjadi prasyarat kritis, dan saran pengelompokan TP menjadi bab/topik pembelajaran.");
+  L.push("");
+  L.push("ATURAN TAMBAHAN: JANGAN mengubah substansi atau menambahkan materi di luar teks CP yang kuberikan. Bila teks CP memuat beberapa elemen, proses semuanya dan kelompokkan per elemen.");
+  L.push("");
+  L.push(ATURAN_FORMAT);
+  return L.join("\n");
+}
+
+function buildPromptSoal(v){
+  const huruf = v.opsi === "5" ? "A–E" : "A–D";
+  const L = [];
+  L.push("Anda adalah pakar evaluasi pembelajaran Indonesia yang berpengalaman menyusun instrumen asesmen Kurikulum Merdeka. Susunkan perangkat soal yang lengkap dan siap pakai dengan data berikut:");
+  L.push("");
+  L.push("KONTEKS:");
+  L.push(barisKonteks(v));
+  L.push("- Topik / materi yang diujikan: " + v.topik);
+  L.push("- Jumlah soal pilihan ganda: " + v.jumlahPG + " soal, masing-masing " + v.opsi + " opsi jawaban (" + huruf + ")");
+  L.push("- Jumlah soal esai/uraian: " + v.jumlahEsai + " soal");
+  L.push("- Level kognitif: " + v.level);
+  if(v.konteks) L.push("- Konteks soal yang diutamakan: " + v.konteks);
+  L.push("");
+  if(v.tp){
+    L.push("TUJUAN PEMBELAJARAN (TP) YANG HARUS DITAGIH PERSIS:");
+    L.push(v.tp);
+    L.push("");
+  } else {
+    L.push("TP tidak kuberikan — rumuskan sendiri TP yang sesuai dengan topik dan fase ini, lalu cantumkan pada kisi-kisi.");
+    L.push("");
+  }
+  L.push("SUSUN DOKUMEN DENGAN STRUKTUR PERSIS BERIKUT:");
+  L.push("# ASESMEN — " + String(v.topik).toUpperCase());
+  L.push("## A. Kisi-kisi Soal — tabel: | No | Tujuan Pembelajaran | Indikator Soal | Level Kognitif | Bentuk Soal | Nomor Soal | Skor Maks |.");
+  L.push("## B. Soal Pilihan Ganda — tulis semua soal bernomor. Setiap soal: gunakan stimulus/kasus singkat bila sesuai level kognitifnya, opsi jawaban homogen dan sejajar, hanya ADA SATU jawaban paling benar, pengecoh harus masuk akal. JANGAN menuliskan kunci di bagian ini.");
+  L.push("## C. Soal Esai / Uraian — soal yang menuntut penalaran, bukan sekadar hafalan (kecuali level kognitif yang kuminta memang dasar).");
+  L.push("## D. Kunci Jawaban dan Pembahasan — letakkan di bagian PALING AKHIR dokumen, terpisah jelas dari soal: kunci PG per nomor beserta pembahasan ringkas 1–2 kalimat, dan jawaban acuan untuk esai.");
+  L.push("## E. Rubrik dan Pedoman Penskoran — tabel rubrik esai: | Aspek/Kriteria | Skor 4 | Skor 3 | Skor 2 | Skor 1 | (sesuaikan jumlah kolom dengan rentang skor yang wajar), bobot skor PG dan esai, serta rumus menghitung nilai akhir (skala 0–100).");
+  L.push("");
+  L.push("ATURAN TAMBAHAN: distribusikan kunci jawaban PG secara seimbang antar opsi; hindari pola 'semua jawaban benar/salah'; hindari kata negatif ganda pada stem; soal harus relevan dengan konteks peserta didik Indonesia; periksa kembali setiap soal agar benar-benar hanya punya satu jawaban benar.");
+  L.push("");
+  L.push(ATURAN_FORMAT);
+  return L.join("\n");
+}
+/*BUILDERS-END*/
+
+function kumpulkanModul(){
+  const i = identitas();
+  const dimensi = Array.from(document.querySelectorAll("#m_dimensi input:checked")).map(c=>c.value);
+  return Object.assign({}, i, {
+    topik: val("m_topik"), cp: val("m_cp"), waktu: val("m_waktu"),
+    model: val("m_model")==="__lain" ? (val("m_model_lain") || "—") : val("m_model"),
+    dimensi, catatan: val("m_catatan")
+  });
+}
+function kumpulkanCPTP(){
+  const i = identitas();
+  return Object.assign({}, i, {
+    elemen: val("a_elemen"), pertemuan: val("a_pertemuan") || "16", cp: val("a_cp"), catatan: val("a_catatan")
+  });
+}
+function kumpulkanSoal(){
+  const i = identitas();
+  return Object.assign({}, i, {
+    topik: val("s_topik"), tp: val("s_tp"),
+    jumlahPG: val("s_jumlah_pg") || "0", opsi: val("s_opsi"), jumlahEsai: val("s_jumlah_esai") || "0",
+    level: val("s_level"), konteks: val("s_konteks")
+  });
+}
+function tampilkanPrompt(wadahId, promptId, hitungId, teks){
+  $(promptId).value = teks;
+  $(wadahId).style.display = "block";
+  const tok = Math.round(teks.length / 4);
+  $(hitungId).textContent = "(±" + teks.length.toLocaleString("id-ID") + " karakter, ±" + tok.toLocaleString("id-ID") + " token)";
+  $(wadahId).scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+$("m_susun").addEventListener("click", ()=>{
+  const v = kumpulkanModul();
+  if(!v.topik){ toast("Isi dulu Topik / Materi Pokok-nya."); $("m_topik").focus(); return; }
+  tampilkanPrompt("m_keluar", "m_prompt", "m_hitung", buildPromptModul(v));
+});
+$("a_susun").addEventListener("click", ()=>{
+  const v = kumpulkanCPTP();
+  if(!v.cp){ toast("Tempel dulu teks CP resminya — itu bahan utama analisis ini."); $("a_cp").focus(); return; }
+  try{ localStorage.setItem("ag_cp_terakhir", v.cp); }catch(e){}
+  tampilkanPrompt("a_keluar", "a_prompt", "a_hitung", buildPromptCPTP(v));
+  segarkanRingkasan();
+});
+$("s_susun").addEventListener("click", ()=>{
+  const v = kumpulkanSoal();
+  if(!v.topik){ toast("Isi dulu Topik / Materi yang diujikan."); $("s_topik").focus(); return; }
+  if(v.jumlahPG === "0" && v.jumlahEsai === "0"){ toast("Jumlah soal PG dan esai tidak boleh dua-duanya 0."); return; }
+  tampilkanPrompt("s_keluar", "s_prompt", "s_hitung", buildPromptSoal(v));
+});
+
+/* ================= Aksi prompt: salin / ChatGPT / Gemini ================= */
+async function salinTeks(teks){
+  try{ await navigator.clipboard.writeText(teks); return true; }
+  catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = teks; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try{ ok = document.execCommand("copy"); }catch(_){}
+    ta.remove(); return ok;
+  }
+}
+document.querySelectorAll("[data-aksi]").forEach(btn=>{
+  btn.addEventListener("click", async ()=>{
+    const teks = $(btn.dataset.target).value;
+    if(!teks){ toast("Susun prompt-nya dulu."); return; }
+    const aksi = btn.dataset.aksi;
+    if(aksi === "salin"){
+      toast(await salinTeks(teks) ? "✅ Prompt tersalin — tempel di Gemini/ChatGPT." : "Gagal menyalin otomatis; tekan lama pada teks prompt lalu salin manual.");
+    } else if(aksi === "chatgpt"){
+      await salinTeks(teks);
+      if(teks.length <= 7000){
+        window.open("https://chatgpt.com/?q=" + encodeURIComponent(teks), "_blank");
+        toast("Membuka ChatGPT — prompt terisi otomatis. Prompt juga tersalin sebagai cadangan.");
+      } else {
+        window.open("https://chatgpt.com/", "_blank");
+        toast("Prompt panjang (>7.000 karakter) sudah tersalin — tempel di kolom ChatGPT lalu Enter.", 4500);
+      }
+    } else if(aksi === "gemini"){
+      await salinTeks(teks);
+      window.open("https://gemini.google.com/app", "_blank");
+      toast("Prompt tersalin & Gemini dibuka — tempel (paste) di kolom Gemini lalu Enter.", 4500);
+    }
+  });
+});
+
+/* ================= PERAPI DOKUMEN ================= */
+/*RENDER-START*/
+function escapeHTML(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function inlineFmt(s){
+  s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/(^|[^*\w])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+  s = s.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2">$1</a>');
+  return s;
+}
+function renderMarkdown(md){
+  const lines = md.replace(/\r\n/g,"\n").split("\n");
+  let html = "", i = 0;
+  const sel = baris => baris.trim().replace(/^\||\|$/g,"").split("|").map(c=>inlineFmt(escapeHTML(c.trim())));
+  while(i < lines.length){
+    const line = lines[i];
+    // Tabel
+    if(/^\s*\|.*\|\s*$/.test(line)){
+      const rows = [];
+      while(i < lines.length && /^\s*\|.*\|\s*$/.test(lines[i])){ rows.push(lines[i]); i++; }
+      let kepala = null; const badan = [];
+      rows.forEach((r, idx)=>{
+        if(/^[\s|:\-]+$/.test(r)) return; // baris pemisah
+        const cells = sel(r);
+        if(idx === 0 && rows.length > 1 && /^[\s|:\-]+$/.test(rows[1])) kepala = cells; else badan.push(cells);
+      });
+      html += "<table>";
+      if(kepala) html += "<thead><tr>" + kepala.map(c=>"<th>"+c+"</th>").join("") + "</tr></thead>";
+      html += "<tbody>" + badan.map(r=>"<tr>" + r.map(c=>"<td>"+c+"</td>").join("") + "</tr>").join("") + "</tbody></table>";
+      continue;
+    }
+    // Heading
+    const h = line.match(/^(#{1,6})\s+(.*)$/);
+    if(h){ const lvl = Math.min(h[1].length, 4); html += "<h"+lvl+">" + inlineFmt(escapeHTML(h[2].trim())) + "</h"+lvl+">"; i++; continue; }
+    // Garis horizontal
+    if(/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)){ html += "<hr>"; i++; continue; }
+    // Blockquote
+    if(/^\s*>\s?/.test(line)){
+      const q = [];
+      while(i < lines.length && /^\s*>\s?/.test(lines[i])){ q.push(lines[i].replace(/^\s*>\s?/,"")); i++; }
+      html += "<blockquote><p>" + inlineFmt(escapeHTML(q.join(" "))) + "</p></blockquote>"; continue;
+    }
+    // Daftar tak berurutan
+    if(/^\s*[-*•]\s+/.test(line)){
+      const items = [];
+      while(i < lines.length && /^\s*[-*•]\s+/.test(lines[i])){ items.push(lines[i].replace(/^\s*[-*•]\s+/,"")); i++; }
+      html += "<ul>" + items.map(t=>"<li>"+inlineFmt(escapeHTML(t))+"</li>").join("") + "</ul>"; continue;
+    }
+    // Daftar berurutan
+    if(/^\s*\d+[.)]\s+/.test(line)){
+      const items = [];
+      while(i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])){ items.push(lines[i].replace(/^\s*\d+[.)]\s+/,"")); i++; }
+      html += "<ol>" + items.map(t=>"<li>"+inlineFmt(escapeHTML(t))+"</li>").join("") + "</ol>"; continue;
+    }
+    // Baris kosong
+    if(line.trim() === ""){ i++; continue; }
+    // Paragraf (gabung baris berurutan)
+    const p = [line.trim()];
+    i++;
+    while(i < lines.length && lines[i].trim() !== "" &&
+          !/^(#{1,6})\s+/.test(lines[i]) && !/^\s*\|.*\|\s*$/.test(lines[i]) &&
+          !/^\s*[-*•]\s+/.test(lines[i]) && !/^\s*\d+[.)]\s+/.test(lines[i]) &&
+          !/^\s*>\s?/.test(lines[i]) && !/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(lines[i])){
+      p.push(lines[i].trim()); i++;
+    }
+    html += "<p>" + inlineFmt(escapeHTML(p.join(" "))) + "</p>";
+  }
+  return html;
+}
+/*RENDER-END*/
+
+function kopHTML(){
+  const sekolah = val("id_sekolah"), alamat = val("id_alamat");
+  if(!sekolah && !val("k_baris1")) return "";
+  let s = '<div class="kop">';
+  if(val("k_baris1")) s += '<div style="font-weight:bold;font-size:12pt">' + escapeHTML(val("k_baris1")) + "</div>";
+  if(sekolah) s += '<div class="sekolah">' + escapeHTML(sekolah) + "</div>";
+  if(alamat) s += '<div class="alamat">' + escapeHTML(alamat) + "</div>";
+  if(val("k_kontak")) s += '<div class="alamat">' + escapeHTML(val("k_kontak")) + "</div>";
+  return s + "</div>";
+}
+function ttdHTML(){
+  if(val("k_ttd") === "tidak") return "";
+  const i = identitas();
+  const tgl = new Date().toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"});
+  const tempat = val("k_kota") ? escapeHTML(val("k_kota")) + ", " : "";
+  const kepala = val("k_kepala"), nipKepala = val("k_nip_kepala");
+  return '<table style="border:none;width:100%;margin-top:34px;font-size:11pt"><tr>' +
+    '<td style="border:none;width:50%;vertical-align:top">Mengetahui,<br>Kepala Sekolah<br><br><br><br><strong>' +
+      (kepala ? escapeHTML(kepala) : "........................................") + "</strong>" +
+      (nipKepala ? "<br>NIP. " + escapeHTML(nipKepala) : "") + "</td>" +
+    '<td style="border:none;width:50%;vertical-align:top">' + tempat + tgl + "<br>Guru Mata Pelajaran<br><br><br><br><strong>" +
+      (i.nama ? escapeHTML(i.nama) : "........................................") + "</strong>" +
+      (i.nip ? "<br>NIP. " + escapeHTML(i.nip) : "") + "</td></tr></table>";
+}
+function siapkanDokumen(){
+  let teks = val("p_teks");
+  if(!teks) return null;
+  // Buang pagar kode bila seluruh teks terbungkus ```...```
+  teks = teks.replace(/^\s*```(?:markdown|md)?\s*\n/, "").replace(/\n```\s*$/, "");
+  let judul = val("p_judul");
+  if(!judul){
+    const m = teks.match(/^#\s+(.+)$/m);
+    if(m){ judul = m[1].replace(/\*\*/g,"").trim(); teks = teks.replace(/^#\s+.+$/m, "").replace(/^\n+/, ""); }
+  }
+  return { judul, isi: renderMarkdown(teks) };
+}
+function dokumenLengkapHTML(){
+  const d = siapkanDokumen(); if(!d) return null;
+  return kopHTML() + (d.judul ? "<h1>" + escapeHTML(d.judul) + "</h1>" : "") + d.isi + ttdHTML();
+}
+$("p_rapikan").addEventListener("click", ()=>{
+  const html = dokumenLengkapHTML();
+  if(!html){ toast("Tempel dulu teks hasil dari Gemini/ChatGPT."); $("p_teks").focus(); return; }
+  $("p_pratinjau").innerHTML = html;
+  $("p_hasil").style.display = "block";
+  $("p_hasil").scrollIntoView({behavior:"smooth"});
+  toast("✅ Dokumen dirapikan. Silakan unduh Word atau cetak PDF.");
+});
+$("p_contoh").addEventListener("click", ()=>{
+  $("p_judul").value = "";
+  $("p_teks").value = [
+    "# MODUL AJAR — PECAHAN SENILAI",
+    "",
+    "## A. Informasi Umum",
+    "",
+    "| Komponen | Keterangan |",
+    "|---|---|",
+    "| Mata Pelajaran | Matematika |",
+    "| Fase / Kelas | C / 5 |",
+    "| Alokasi Waktu | 2 pertemuan × 2 JP |",
+    "",
+    "## B. Tujuan Pembelajaran",
+    "",
+    "1. Peserta didik mampu **menentukan pecahan senilai** dengan gambar dan model konkret.",
+    "2. Peserta didik mampu **membandingkan dua pecahan** dengan penyebut berbeda.",
+    "",
+    "## C. Kegiatan Inti",
+    "",
+    "- Guru menampilkan gambar pizza yang dibagi tidak sama besar sebagai pemantik.",
+    "- Siswa berdiskusi kelompok menentukan bagian yang senilai.",
+    "- Setiap kelompok mempresentasikan hasilnya.",
+    "",
+    "> Prinsip pembelajaran: berkesadaran, bermakna, menggembirakan."
+  ].join("\n");
+  $("p_rapikan").click();
+});
+const CSS_WORD = [
+  "body{font-family:Calibri,'Times New Roman',serif;font-size:11pt;color:#111;line-height:1.6}",
+  "h1{font-size:15pt;text-align:center;text-transform:uppercase}h2{font-size:12.5pt}h3{font-size:11.5pt}h4{font-size:11pt}",
+  "p{margin:5px 0;text-align:justify}ul,ol{margin:5px 0 5px 22px}",
+  "table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #333;padding:5px 7px;vertical-align:top;text-align:left}th{background:#e8e8e8}",
+  ".kop{text-align:center;border-bottom:3px double #111;padding-bottom:8px;margin-bottom:16px}.kop .sekolah{font-weight:bold;font-size:14pt;text-transform:uppercase}.kop .alamat{font-size:9.5pt}",
+  "blockquote{border-left:3px solid #999;margin:8px 0;padding:2px 12px;color:#333}"
+].join("");
+function namaBerkas(){
+  const d = siapkanDokumen();
+  const dasar = (d && d.judul ? d.judul : "dokumen-perangkat-ajar").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60);
+  return (dasar || "dokumen-perangkat-ajar") + ".doc";
+}
+$("p_word").addEventListener("click", ()=>{
+  const isi = dokumenLengkapHTML();
+  if(!isi){ toast("Rapikan dulu dokumennya."); return; }
+  const html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style>' + CSS_WORD + "</style></head><body>" + isi + "</body></html>";
+  const blob = new Blob(["\ufeff" + html], {type:"application/msword"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = namaBerkas();
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  toast("⬇ Berkas Word diunduh: " + a.download);
+});
+$("p_pdf").addEventListener("click", ()=>{
+  const isi = dokumenLengkapHTML();
+  if(!isi){ toast("Rapikan dulu dokumennya."); return; }
+  const w = window.open("", "_blank");
+  if(!w){ toast("Popup diblokir browser — izinkan popup untuk mencetak PDF."); return; }
+  w.document.write("<!DOCTYPE html><html><head><meta charset='utf-8'><title>" + escapeHTML(val("p_judul") || "Dokumen Perangkat Ajar") + "</title><style>" + CSS_WORD + "@page{margin:2cm}</style></head><body>" + isi + "</body></html>");
+  w.document.close(); w.focus();
+  setTimeout(()=>{ w.print(); }, 450);
+});
+
+/* ================= Inisialisasi ================= */
+muat("ag_id", ID_FIELDS);
+muat("ag_kop", KOP_FIELDS);
+pasangPersistensi();
+segarkanLainnya();
+segarkanRingkasan();
+</script>
+</body>
+</html>
